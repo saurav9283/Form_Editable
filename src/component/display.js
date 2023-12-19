@@ -43,6 +43,7 @@ const FormDataDisplay = () => {
 
   const handleDelete = () => {
     setFormData({});
+    localStorage.removeItem("submittedData"); 
     toast.info("Form data deleted!", {
       duration: 4000,
       position: "top-center",
