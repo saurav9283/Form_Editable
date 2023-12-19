@@ -49,6 +49,9 @@ const FormDataDisplay = () => {
     });
     navigate("/");
   };
+  const handlePrevious = () => {
+    navigate("/"); 
+  };
   return (
     <div className="display-container">
       <h2>Submitted Details</h2>
@@ -70,6 +73,9 @@ const FormDataDisplay = () => {
             <strong>Address:</strong> {formData.address}
           </p>
           <div className="buttons">
+          <button className="previous-button" onClick={handlePrevious}>
+              Previous
+            </button>
             <button className="edit-button" onClick={handleEdit}>
               Edit
             </button>

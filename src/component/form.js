@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// Form.js
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./form.css";
 
@@ -11,7 +12,15 @@ const Form = () => {
     address: "",
   });
 
+  const [submittedData, setSubmittedData] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const savedData = localStorage.getItem("submittedData");
+    if (savedData) {
+      setSubmittedData(JSON.parse(savedData));
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,7 +32,16 @@ const Form = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // console.log("formData")
+    const updatedSubmittedData = [...submittedData, formData];
+    localStorage.setItem("submittedData", JSON.stringify(updatedSubmittedData));
+    setSubmittedData(updatedSubmittedData);
+    setFormData({
+      firstName: "",
+      lastName: "",
+      fatherName: "",
+      motherName: "",
+      address: "",
+    });
     navigate("/display", { state: { formData: formData } });
   };
 
@@ -86,6 +104,24 @@ const Form = () => {
         </div>
         <button type="submit">Submit</button>
       </form>
+      <div className="submitted-data-container">
+        <h2>Submitted Data</h2>
+        {submittedData.length > 0 ? (
+          <ul>
+            {submittedData.map((data, index) => (
+              <li key={index}>
+                <strong>First Name:</strong> {data.firstName}, &nbsp;
+                <strong>Last Name:</strong> {data.lastName}, &nbsp;
+                <strong>Father's Name:</strong> {data.fatherName}, &nbsp;
+                <strong>Mother's Name:</strong> {data.motherName}, &nbsp;
+                <strong>Address:</strong> {data.address}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No data submitted yet.</p>
+        )}
+      </div>
     </div>
   );
 };
