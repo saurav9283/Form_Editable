@@ -54,3 +54,20 @@ table th {
     background-color: #f2f2f2;
     font-weight: bold;
 }
+.buttons button.edit-button {
+    background-color: #FFA500;
+    color: white;
+}
+
+.buttons button.edit-button:hover {
+    background-color: #FF8C00;
+}
+
+.buttons button.delete-button {
+    background-color: #FF6347;
+    color: white;
+}
+
+.buttons button.delete-button:hover {
+    background-color: #FF4500;
+}
