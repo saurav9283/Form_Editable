@@ -1,4 +1,3 @@
-// Form.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./form.css";
@@ -107,17 +106,28 @@ const Form = () => {
       <div className="submitted-data-container">
         <h2>Submitted Data</h2>
         {submittedData.length > 0 ? (
-          <ul>
-            {submittedData.map((data, index) => (
-              <li key={index}>
-                <strong>First Name:</strong> {data.firstName}, &nbsp;
-                <strong>Last Name:</strong> {data.lastName}, &nbsp;
-                <strong>Father's Name:</strong> {data.fatherName}, &nbsp;
-                <strong>Mother's Name:</strong> {data.motherName}, &nbsp;
-                <strong>Address:</strong> {data.address}
-              </li>
-            ))}
-          </ul>
+          <table>
+            <thead>
+              <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Father's Name</th>
+                <th>Mother's Name</th>
+                <th>Address</th>
+              </tr>
+            </thead>
+            <tbody>
+              {submittedData.map((data, index) => (
+                <tr key={index}>
+                  <td>{data.firstName}</td>
+                  <td>{data.lastName}</td>
+                  <td>{data.fatherName}</td>
+                  <td>{data.motherName}</td>
+                  <td>{data.address}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         ) : (
           <p>No data submitted yet.</p>
         )}
