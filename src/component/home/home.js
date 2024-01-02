@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import "./form.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "./home.css";
 
 const Form = () => {
   const [formData, setFormData] = useState({
@@ -12,10 +11,9 @@ const Form = () => {
     motherName: "",
     address: "",
   });
-  const [editedFormData, setEditedFormData] = useState({});
-  const [showModal, setShowModal] = useState(false);
   const [submittedData, setSubmittedData] = useState([]);
-  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [editedIndex, setEditedIndex] = useState(null);
 
   useEffect(() => {
@@ -32,17 +30,9 @@ const Form = () => {
       [name]: value,
     });
   };
-  
-  const handleSave = () => {
-    const updatedFormData = { ...formData, ...editedFormData };
-    const updatedSubmittedData = submittedData.map((data, index) =>
-      index === editedIndex ? updatedFormData : data
-    );
 
-    localStorage.setItem("submittedData", JSON.stringify(updatedSubmittedData));
-    setSubmittedData(updatedSubmittedData);
-    setFormData(updatedFormData);
-    setShowModal(false);
+  const openModalToAdd = () => {
+    setIsEditing(false);
     setFormData({
       firstName: "",
       lastName: "",
@@ -50,28 +40,25 @@ const Form = () => {
       motherName: "",
       address: "",
     });
-    toast.success("Changes saved successfully!", {
-      duration: 4000,
-      position: "top-center",
-    });
-  };
-
-  const handleCloseModal = () => {
-    setFormData({
-      firstName: "",
-      lastName: "",
-      fatherName: "",
-      motherName: "",
-      address: "",
-    });
-    setShowModal(false);
+    setShowModal(true);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const updatedSubmittedData = [...submittedData, formData];
-    localStorage.setItem("submittedData", JSON.stringify(updatedSubmittedData));
-    setSubmittedData(updatedSubmittedData);
+    if (isEditing) {
+      const updatedSubmittedData = submittedData.map((data, index) =>
+        index === editedIndex ? formData : data
+      );
+      setSubmittedData(updatedSubmittedData);
+      localStorage.setItem("submittedData", JSON.stringify(updatedSubmittedData));
+      toast.success("Data updated successfully!", { position: "top-center" });
+    } else {
+      const updatedSubmittedData = [...submittedData, formData];
+      setSubmittedData(updatedSubmittedData);
+      localStorage.setItem("submittedData", JSON.stringify(updatedSubmittedData));
+      toast.success("Data added successfully!", { position: "top-center" });
+    }
+    setShowModal(false);
     setFormData({
       firstName: "",
       lastName: "",
@@ -79,29 +66,35 @@ const Form = () => {
       motherName: "",
       address: "",
     });
-    // navigate("/display", { state: { formData: formData } });
   };
 
   const handleEdit = (index) => {
-    setEditedFormData({});
+    setIsEditing(true);
+    setEditedIndex(index);
     setFormData(submittedData[index]);
     setShowModal(true);
-    setEditedIndex(index);
   };
 
   const handleDelete = (index) => {
     const updatedSubmittedData = submittedData.filter((_, i) => i !== index);
     setSubmittedData(updatedSubmittedData);
     localStorage.setItem("submittedData", JSON.stringify(updatedSubmittedData));
-    toast.info("Form data deleted!", {
-      duration: 4000,
-      position: "top-center",
-    });
+    toast.info("Data deleted!", { position: "top-center" });
   };
 
   return (
-    <div className="form-container">
-      <form onSubmit={handleSubmit}>
+    <>
+    <div className="add">
+      <button onClick={openModalToAdd} >+Add</button>
+    </div>
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={() => setShowModal(false)}>
+              &times;
+            </span>
+            <h2>{isEditing ? "Edit Details" : "Add Details"}</h2>
+            <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="firstName">First Name</label>
           <input
@@ -158,10 +151,10 @@ const Form = () => {
         </div>
         <button type="submit">Submit</button>
       </form>
-      <div className="submitted-data-container">
-        <h2>Submitted Data</h2>
-        {submittedData.length > 0 ? (
-          <table>
+          </div>
+        </div>
+      )}
+      <table>
             <thead>
               <tr>
                 <th>First Name</th>
@@ -200,63 +193,10 @@ const Form = () => {
               ))}
             </tbody>
           </table>
-        ) : (
-          <p>No data submitted yet.</p>
-        )}
-      </div>
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={handleCloseModal}>
-              &times;
-            </span>
-            <h2>Edit Details</h2>
-            <form>
-              <label>First Name:</label>
-              <input
-                type="text"
-                name="firstName"
-                value={editedFormData.firstName || formData.firstName}
-                onChange={handleChange}
-              />
-              <label>Last Name:</label>
-              <input
-                type="text"
-                name="lastName"
-                value={editedFormData.lastName || formData.lastName}
-                onChange={handleChange}
-              />
-              <label>Father's Name:</label>
-              <input
-                type="text"
-                name="fatherName"
-                value={editedFormData.fatherName || formData.fatherName}
-                onChange={handleChange}
-              />
-              <label>Mother's Name:</label>
-              <input
-                type="text"
-                name="motherName"
-                value={editedFormData.motherName || formData.motherName}
-                onChange={handleChange}
-              />
-              <label>Address:</label>
-              <input
-                type="text"
-                name="address"
-                value={editedFormData.address || formData.address}
-                onChange={handleChange}
-              />
-              <button type="button" onClick={handleSave}>
-                Save
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
       <ToastContainer />
-    </div>
+    </>
   );
 };
 
 export default Form;
+
