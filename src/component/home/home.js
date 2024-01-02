@@ -43,7 +43,7 @@ const Form = () => {
     setShowModal(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit1 = (e) => {
     e.preventDefault();
     if (isEditing) {
       const updatedSubmittedData = submittedData.map((data, index) =>
@@ -84,9 +84,9 @@ const Form = () => {
 
   return (
     <>
-    <div className="add">
-      <button onClick={openModalToAdd} >+Add</button>
-    </div>
+      <div className="add">
+        <button onClick={openModalToAdd}>+Add</button>
+      </div>
       {showModal && (
         <div className="modal">
           <div className="modal-content">
@@ -94,109 +94,112 @@ const Form = () => {
               &times;
             </span>
             <h2>{isEditing ? "Edit Details" : "Add Details"}</h2>
-            <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="firstName">First Name</label>
-          <input
-            required
-            type="text"
-            id="firstName"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="lastName">Last Name</label>
-          <input
-            required
-            type="text"
-            id="lastName"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="fatherName">Father's Name</label>
-          <input
-            required
-            type="text"
-            id="fatherName"
-            name="fatherName"
-            value={formData.fatherName}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="motherName">Mother's Name</label>
-          <input
-            required
-            type="text"
-            id="motherName"
-            name="motherName"
-            value={formData.motherName}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="address">Address</label>
-          <textarea
-            required
-            id="address"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-          ></textarea>
-        </div>
-        <button type="submit">Submit</button>
-      </form>
+            <form onSubmit={handleSubmit1}>
+              <div className="form-group">
+                <label htmlFor="firstName">First Name</label>
+                <input
+                  required
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="lastName">Last Name</label>
+                <input
+                  required
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="fatherName">Father's Name</label>
+                <input
+                  required
+                  type="text"
+                  id="fatherName"
+                  name="fatherName"
+                  value={formData.fatherName}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="motherName">Mother's Name</label>
+                <input
+                  required
+                  type="text"
+                  id="motherName"
+                  name="motherName"
+                  value={formData.motherName}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="address">Address</label>
+                <textarea
+                  required
+                  id="address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                ></textarea>
+              </div>
+              <button type="submit">Submit</button>
+            </form>
           </div>
         </div>
       )}
-      <table>
-            <thead>
-              <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Father's Name</th>
-                <th>Mother's Name</th>
-                <th>Address</th>
-                <th>Handle Change</th>
+      {submittedData.length > 0 ? (
+        <table>
+          <thead>
+            <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Father's Name</th>
+              <th>Mother's Name</th>
+              <th>Address</th>
+              {/* <th>Handle Change</th> */}
+            </tr>
+          </thead>
+          <tbody>
+            {submittedData.map((data, index) => (
+              <tr key={index}>
+                <td>{data.firstName}</td>
+                <td>{data.lastName}</td>
+                <td>{data.fatherName}</td>
+                <td>{data.motherName}</td>
+                <td>{data.address}</td>
+                <td>
+                  <div className="buttons">
+                    <button
+                      onClick={() => handleEdit(index)}
+                      className="edit-button"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(index)}
+                      className="delete-button"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {submittedData.map((data, index) => (
-                <tr key={index}>
-                  <td>{data.firstName}</td>
-                  <td>{data.lastName}</td>
-                  <td>{data.fatherName}</td>
-                  <td>{data.motherName}</td>
-                  <td>{data.address}</td>
-                  <td>
-                    <div className="buttons">
-                      <button
-                        onClick={() => handleEdit(index)}
-                        className="edit-button"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(index)}
-                        className="delete-button"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <h1>No data available Please add something.</h1>
+      )}
       <ToastContainer />
     </>
   );
 };
 
 export default Form;
-
