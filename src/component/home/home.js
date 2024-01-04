@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./home.css";
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 const Form = () => {
   const [formData, setFormData] = useState({
@@ -11,9 +13,9 @@ const Form = () => {
     motherName: "",
     address: "",
   });
-  const [submittedData, setSubmittedData] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [submittedData, setSubmittedData] = useState([]);
   const [editedIndex, setEditedIndex] = useState(null);
 
   useEffect(() => {
@@ -22,15 +24,6 @@ const Form = () => {
       setSubmittedData(JSON.parse(savedData));
     }
   }, []);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
   const openModalToAdd = () => {
     setIsEditing(false);
     setFormData({
@@ -43,6 +36,10 @@ const Form = () => {
     setShowModal(true);
   };
 
+  const handleEdit = (index) => {
+    setEditedIndex(index);
+    setFormData(submittedData[index]);
+  };
   const handleSubmit1 = (e) => {
     e.preventDefault();
     if (isEditing) {
@@ -68,11 +65,22 @@ const Form = () => {
     });
   };
 
-  const handleEdit = (index) => {
-    setIsEditing(true);
-    setEditedIndex(index);
-    setFormData(submittedData[index]);
-    setShowModal(true);
+  const handleSave = (index) => {
+    const updatedData = submittedData.map((data, dataIndex) =>
+      dataIndex === index ? formData : data
+    );
+    setSubmittedData(updatedData);
+    localStorage.setItem("submittedData", JSON.stringify(updatedData));
+    setEditedIndex(null);
+    toast.success("Data updated successfully!", { position: "top-center" });
+  };
+
+  const handleChange = (e, fieldName) => {
+    const { value } = e.target;
+    setFormData({
+      ...formData,
+      [fieldName]: value,
+    });
   };
 
   const handleDelete = (index) => {
@@ -84,7 +92,7 @@ const Form = () => {
 
   return (
     <>
-      <div className="add">
+       <div className="add">
         <button onClick={openModalToAdd}>+Add</button>
       </div>
       {showModal && (
@@ -163,31 +171,76 @@ const Form = () => {
               <th>Father's Name</th>
               <th>Mother's Name</th>
               <th>Address</th>
-              {/* <th>Handle Change</th> */}
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {submittedData.map((data, index) => (
               <tr key={index}>
-                <td>{data.firstName}</td>
-                <td>{data.lastName}</td>
-                <td>{data.fatherName}</td>
-                <td>{data.motherName}</td>
-                <td>{data.address}</td>
+                <td>
+                  {editedIndex === index ? (
+                    <input
+                      type="text"
+                      value={formData.firstName}
+                      onChange={(e) => handleChange(e, "firstName")}
+                    />
+                  ) : (
+                    data.firstName
+                  )}
+                </td>
+                <td>
+                  {editedIndex === index ? (
+                    <input
+                      type="text"
+                      value={formData.lastName}
+                      onChange={(e) => handleChange(e, "lastName")}
+                    />
+                  ) : (
+                    data.lastName
+                  )}
+                </td>
+                <td>
+                  {editedIndex === index ? (
+                    <input
+                      type="text"
+                      value={formData.fatherName}
+                      onChange={(e) => handleChange(e, "fatherName")}
+                    />
+                  ) : (
+                    data.fatherName
+                  )}
+                </td>
+                <td>
+                  {editedIndex === index ? (
+                    <input
+                      type="text"
+                      value={formData.motherName}
+                      onChange={(e) => handleChange(e, "motherName")}
+                    />
+                  ) : (
+                    data.motherName
+                  )}
+                </td>
+                <td>
+                  {editedIndex === index ? (
+                    <textarea
+                      value={formData.address}
+                      onChange={(e) => handleChange(e, "address")}
+                    />
+                  ) : (
+                    data.address
+                  )}
+                </td>
                 <td>
                   <div className="buttons">
-                    <button
-                      onClick={() => handleEdit(index)}
-                      className="edit-button"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(index)}
-                      className="delete-button"
-                    >
-                      Delete
-                    </button>
+                    {editedIndex === index ? (
+                      <button onClick={() => handleSave(index)}>Save</button>
+                    ) : (
+                      <>
+                        <EditIcon onClick={() => handleEdit(index)} />
+                        <DeleteIcon onClick={() => handleDelete(index)} />
+                      </>
+                    )}
                   </div>
                 </td>
               </tr>
@@ -195,7 +248,7 @@ const Form = () => {
           </tbody>
         </table>
       ) : (
-        <h1>No data available Please add something.</h1>
+        <h1>No data available. Please add something.</h1>
       )}
       <ToastContainer />
     </>
