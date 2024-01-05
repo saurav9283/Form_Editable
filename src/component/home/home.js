@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./home.css";
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 const Form = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +17,7 @@ const Form = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [submittedData, setSubmittedData] = useState([]);
   const [editedIndex, setEditedIndex] = useState(null);
+  const [recordsToShow, setRecordsToShow] = useState(submittedData.length);
 
   useEffect(() => {
     const savedData = localStorage.getItem("submittedData");
@@ -100,12 +101,16 @@ const Form = () => {
     setEditedIndex(null);
     toast.success("Data updated successfully!", { position: "top-center" });
   };
+  const handleRecordsToShowChange = (e) => {
+    const newRecordsToShow = parseInt(e.target.value, 10);
+    setRecordsToShow(newRecordsToShow);
+  };
 
   return (
     <>
-    <div className="title">
-      <h1>Welcome To Form</h1>
-    </div>
+      <div className="title">
+        <h1>Welcome To Form</h1>
+      </div>
       <div className="add">
         <button onClick={openModalToAdd}>+Add</button>
       </div>
@@ -176,6 +181,7 @@ const Form = () => {
           </div>
         </div>
       )}
+
       {submittedData.length > 0 ? (
         <table>
           <thead>
@@ -189,7 +195,7 @@ const Form = () => {
             </tr>
           </thead>
           <tbody>
-            {submittedData.map((data, index) => (
+            {submittedData.slice(0, recordsToShow).map((data, index) => (
               <tr key={index}>
                 <td>
                   {editedIndex === index ? (
@@ -260,10 +266,21 @@ const Form = () => {
               </tr>
             ))}
           </tbody>
+          <div className="Pagination">
+            <h3 className="h3">Visible Record {recordsToShow} out of {submittedData.length}</h3>
+            <input
+              type="number"
+              min="1"
+              max={submittedData.length}
+              value={recordsToShow}
+              onChange={handleRecordsToShowChange}
+            />
+          </div>
         </table>
       ) : (
         <h1>No data available. Please add something.</h1>
       )}
+
       <ToastContainer />
     </>
   );
