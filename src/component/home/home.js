@@ -24,6 +24,7 @@ const Form = () => {
       setSubmittedData(JSON.parse(savedData));
     }
   }, []);
+
   const openModalToAdd = () => {
     setIsEditing(false);
     setFormData({
@@ -36,26 +37,44 @@ const Form = () => {
     setShowModal(true);
   };
 
+  const handleChange = (e, fieldName, index) => {
+    const { value } = e.target;
+    if (index !== undefined) {
+      const updatedData = submittedData.map((data, dataIndex) =>
+        dataIndex === index ? { ...data, [fieldName]: value } : data
+      );
+      setSubmittedData(updatedData);
+    } else {
+      setFormData({
+        ...formData,
+        [fieldName]: value,
+      });
+    }
+  };
+
   const handleEdit = (index) => {
     setEditedIndex(index);
+    setIsEditing(true);
     setFormData(submittedData[index]);
+    // setShowModal(true);
   };
-  const handleSubmit1 = (e) => {
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (isEditing) {
       const updatedSubmittedData = submittedData.map((data, index) =>
         index === editedIndex ? formData : data
       );
       setSubmittedData(updatedSubmittedData);
-      localStorage.setItem("submittedData", JSON.stringify(updatedSubmittedData));
       toast.success("Data updated successfully!", { position: "top-center" });
     } else {
       const updatedSubmittedData = [...submittedData, formData];
       setSubmittedData(updatedSubmittedData);
-      localStorage.setItem("submittedData", JSON.stringify(updatedSubmittedData));
       toast.success("Data added successfully!", { position: "top-center" });
     }
     setShowModal(false);
+    setEditedIndex(null);
+    setIsEditing(false);
     setFormData({
       firstName: "",
       lastName: "",
@@ -63,8 +82,15 @@ const Form = () => {
       motherName: "",
       address: "",
     });
+    localStorage.setItem("submittedData", JSON.stringify(submittedData));
   };
 
+  const handleDelete = (index) => {
+    const updatedSubmittedData = submittedData.filter((_, i) => i !== index);
+    setSubmittedData(updatedSubmittedData);
+    localStorage.setItem("submittedData", JSON.stringify(updatedSubmittedData));
+    toast.info("Data deleted!", { position: "top-center" });
+  };
   const handleSave = (index) => {
     const updatedData = submittedData.map((data, dataIndex) =>
       dataIndex === index ? formData : data
@@ -75,24 +101,12 @@ const Form = () => {
     toast.success("Data updated successfully!", { position: "top-center" });
   };
 
-  const handleChange = (e, fieldName) => {
-    const { value } = e.target;
-    setFormData({
-      ...formData,
-      [fieldName]: value,
-    });
-  };
-
-  const handleDelete = (index) => {
-    const updatedSubmittedData = submittedData.filter((_, i) => i !== index);
-    setSubmittedData(updatedSubmittedData);
-    localStorage.setItem("submittedData", JSON.stringify(updatedSubmittedData));
-    toast.info("Data deleted!", { position: "top-center" });
-  };
-
   return (
     <>
-       <div className="add">
+    <div className="title">
+      <h1>Welcome To Form</h1>
+    </div>
+      <div className="add">
         <button onClick={openModalToAdd}>+Add</button>
       </div>
       {showModal && (
@@ -102,7 +116,7 @@ const Form = () => {
               &times;
             </span>
             <h2>{isEditing ? "Edit Details" : "Add Details"}</h2>
-            <form onSubmit={handleSubmit1}>
+            <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="firstName">First Name</label>
                 <input
@@ -111,7 +125,7 @@ const Form = () => {
                   id="firstName"
                   name="firstName"
                   value={formData.firstName}
-                  onChange={handleChange}
+                  onChange={(e) => handleChange(e, "firstName")}
                 />
               </div>
               <div className="form-group">
@@ -122,7 +136,7 @@ const Form = () => {
                   id="lastName"
                   name="lastName"
                   value={formData.lastName}
-                  onChange={handleChange}
+                  onChange={(e) => handleChange(e, "lastName")}
                 />
               </div>
               <div className="form-group">
@@ -133,7 +147,7 @@ const Form = () => {
                   id="fatherName"
                   name="fatherName"
                   value={formData.fatherName}
-                  onChange={handleChange}
+                  onChange={(e) => handleChange(e, "fatherName")}
                 />
               </div>
               <div className="form-group">
@@ -144,7 +158,7 @@ const Form = () => {
                   id="motherName"
                   name="motherName"
                   value={formData.motherName}
-                  onChange={handleChange}
+                  onChange={(e) => handleChange(e, "motherName")}
                 />
               </div>
               <div className="form-group">
@@ -154,7 +168,7 @@ const Form = () => {
                   id="address"
                   name="address"
                   value={formData.address}
-                  onChange={handleChange}
+                  onChange={(e) => handleChange(e, "address")}
                 ></textarea>
               </div>
               <button type="submit">Submit</button>

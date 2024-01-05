@@ -1,10 +1,17 @@
-.add{
+.title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add {
     margin-top: 20px;
     margin-right: 20px;
     display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+    flex-direction: column;
+    align-items: flex-end;
 }
+
 .form-container {
     max-width: 400px;
     margin: 0 auto;
@@ -59,6 +66,7 @@ table th {
     background-color: #f2f2f2;
     font-weight: bold;
 }
+
 .modal {
     display: block;
     position: fixed;
@@ -68,25 +76,25 @@ table th {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.6);
     z-index: 9999;
-  }
-  
-  .modal-content {
+}
+
+.modal-content {
     background-color: white;
     padding: 20px;
     width: 60%;
     max-width: 400px;
-    margin: 30px auto; 
+    margin: 30px auto;
     border-radius: 8px;
     position: relative;
-  }
-  
-  .close {
+}
+
+.close {
     position: absolute;
     top: 10px;
     right: 10px;
     cursor: pointer;
-  }
-  
-  .modal h2 {
+}
+
+.modal h2 {
     margin-bottom: 15px;
-  }
+}
